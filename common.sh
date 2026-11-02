@@ -11,6 +11,9 @@ Y="\e[33m"
 N="\e[34m"
 
 START_TIME=$(date +%S)
+
+mkdir -p $LOGS_FOLDER #create logs folder if not exists
+
 echo -e " $(date +"%d-%m-%Y %H:%M:%S") $0 script execution started .... $Y" | tee -a $LOGS_FILE
 
 check_root () {
@@ -21,7 +24,7 @@ check_root () {
 }
 
 
-mkdir -p $LOGS_FOLDER #create logs folder if not exists
+
 
 VALIDATE () {
 if [ $1 -ne 0 ]; then
