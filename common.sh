@@ -117,6 +117,6 @@ app_restart () {
 
 print_total_time () {
     END_TIME=$(date +%S)
-    TOTAL_TIME=$((10#END_TIME - 10#START_TIME))
+    TOTAL_TIME=$(( 10#$end_time - 10#$start_time ))
     echo -e " $(date +"%d-%m-%Y %H:%M:%S") | Total time taken to execute the script: $TOTAL_TIME seconds $Y" | tee -a $LOGS_FILE
 }
