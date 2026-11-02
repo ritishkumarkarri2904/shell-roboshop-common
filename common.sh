@@ -1,46 +1,38 @@
 #!/bin/bash
 
-
 USERID=$(id -u)
-LOGS_FOLDER="/var/logs/shell-roboshop"
+LOGS_FOLDER="/var/log/shell-roboshop"
 LOGS_FILE="$LOGS_FOLDER/$0.log"
-
 R="\e[31m"
 G="\e[32m"
 Y="\e[33m"
-N="\e[34m"
-
+N="\e[0m"
 SCRIPT_DIR=$PWD
-START_TIME=$(date +%S)
-MONGODB_HOST="mongodb.ritishkumarkarri.fun"
-MYSQL_HOST="mysql.ritishkumarkarri.fun"
+START_TIME=$(date +%s)
+MONGODB_HOST=mongodb.daws88s.online
+MYSQL_HOST=mysql.daws88s.online
 
-mkdir -p $LOGS_FOLDER #create logs folder if not exists
+mkdir -p $LOGS_FOLDER
 
-echo -e " $(date +"%d-%m-%Y %H:%M:%S") $0 script execution started .... $Y" | tee -a $LOGS_FILE
+echo "$(date "+%Y-%m-%d %H:%M:%S") | Script started executing at: $(date)" | tee -a $LOGS_FILE
 
-check_root () {
+check_root(){
     if [ $USERID -ne 0 ]; then
-        echo -e " $R Please run this script as root or with sudo privileges. $N" | tee -a $LOGS_FILE
+        echo -e "$R Please run this script with root user access $N" | tee -a $LOGS_FILE
         exit 1
     fi
 }
 
-
-
-
-VALIDATE () {
-if [ $1 -ne 0 ]; then
-    echo -e "$(date +"%d-%m-%Y %H:%M:%S")" $2 .... $R FAILURE $N" | tee -a $LOGS_FILE
-    exit 1
-else
-    echo -e "$(date +"%d-%m-%Y %H:%M:%S")" $2 .... $G SUCCESS $N" | tee -a $LOGS_FILE
-fi
-
+VALIDATE(){
+    if [ $1 -ne 0 ]; then
+        echo -e "$(date "+%Y-%m-%d %H:%M:%S") | $2 ... $R FAILURE $N" | tee -a $LOGS_FILE
+        exit 1
+    else
+        echo -e "$(date "+%Y-%m-%d %H:%M:%S") | $2 ... $G SUCCESS $N" | tee -a $LOGS_FILE
+    fi
 }
 
-nodejs_setup () {
-    
+nodejs_setup(){
     dnf module disable nodejs -y &>>$LOGS_FILE
     VALIDATE $? "Disabling NodeJS Default version"
 
@@ -54,7 +46,7 @@ nodejs_setup () {
     VALIDATE $? "Installing dependencies"
 }
 
-java_setup () {
+java_setup(){
     dnf install maven -y &>>$LOGS_FILE
     VALIDATE $? "Installing Maven"
 
@@ -66,7 +58,7 @@ java_setup () {
     VALIDATE $? "Moving and Renaming $app_name"
 }
 
-python_setup () {
+python_setup(){
     dnf install python3 gcc python3-devel -y &>>$LOGS_FILE
     VALIDATE $? "Installing Python"
 
@@ -75,8 +67,8 @@ python_setup () {
     VALIDATE $? "Installing dependencies"
 }
 
-app_setup () {
-    
+app_setup(){
+    # creating system user
     id roboshop &>>$LOGS_FILE
     if [ $? -ne 0 ]; then
         useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
@@ -84,6 +76,8 @@ app_setup () {
     else
         echo -e "Roboshop user already exist ... $Y SKIPPING $N"
     fi
+
+    # downloading the app
     mkdir -p /app 
     VALIDATE $? "Creating app directory"
 
@@ -97,10 +91,10 @@ app_setup () {
     VALIDATE $? "Removing existing code"
 
     unzip /tmp/$app_name.zip &>>$LOGS_FILE
-    VALIDATE $? "Unzipping $app_name code"
+    VALIDATE $? "Uzip $app_name code"
 }
 
-systemd_setup () {
+systemd_setup(){
     cp $SCRIPT_DIR/$app_name.service /etc/systemd/system/$app_name.service
     VALIDATE $? "Created systemctl service"
 
@@ -110,13 +104,13 @@ systemd_setup () {
     VALIDATE $? "Starting and enabling $app_name"
 }
 
-app_restart () {
-    systemctl restart $app_name  &>>$LOGS_FILE
+app_restart(){
+    systemctl restart $app_name
     VALIDATE $? "Restarting $app_name"
 }
 
-print_total_time () {
-    END_TIME=$(date +%S)
-    TOTAL_TIME=$(( 10#$end_time - 10#$start_time ))
-    echo -e " $(date +"%d-%m-%Y %H:%M:%S") | Total time taken to execute the script: $TOTAL_TIME seconds $Y" | tee -a $LOGS_FILE
+print_total_time(){
+    END_TIME=$(date +%s)
+    TOTAL_TIME=$(( $END_TIME - $START_TIME ))
+    echo -e "$(date "+%Y-%m-%d %H:%M:%S") | Script execute in: $G $TOTAL_TIME seconds $N" | tee -a $LOGS_FILE
 }

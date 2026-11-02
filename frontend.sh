@@ -1,9 +1,9 @@
 #!/bin/bash
 
 source ./common.sh
-app_name="frontend"
 
-
+app_name=frontend
+app_dir=/usr/share/nginx/html
 check_root
 
 dnf module disable nginx -y &>>$LOGS_FILE
