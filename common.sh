@@ -13,6 +13,7 @@ N="\e[34m"
 SCRIPT_DIR=$PWD
 START_TIME=$(date +%S)
 MONGODB_HOST="mongodb.ritishkumarkarri.fun"
+MYSQL_HOST="mysql.ritishkumarkarri.fun"
 
 mkdir -p $LOGS_FOLDER #create logs folder if not exists
 
@@ -51,6 +52,18 @@ nodejs_setup () {
 
     npm install  &>>$LOGS_FILE
     VALIDATE $? "Installing dependencies"
+}
+
+java_setup () {
+    dnf install maven -y &>>$LOGS_FILE
+    VALIDATE $? "Installing Maven"
+
+    cd /app 
+    mvn clean package &>>$LOGS_FILE
+    VALIDATE $? "Installing and Building $app_name"
+
+    mv target/$app_name-1.0.jar $app_name.jar 
+    VALIDATE $? "Moving and Renaming $app_name"
 }
 
 app_setup () {
