@@ -12,7 +12,7 @@ N="\e[34m"
 
 SCRIPT_DIR=$PWD
 START_TIME=$(date +%S)
-MONGODB_HOST="mongodb.ritishkumar.online"
+MONGODB_HOST="mongodb.ritishkumarkarri.fun"
 
 mkdir -p $LOGS_FOLDER #create logs folder if not exists
 
